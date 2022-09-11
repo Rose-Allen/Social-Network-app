@@ -1,4 +1,4 @@
-const express = require("express")
+const express = require("express");
 
 const app = express();
 
@@ -6,9 +6,17 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.listen(4444, (error) => {
-  if (error) {
-    return console.log(error);
+const start = async () => {
+  try {
+    app.listen(4444, (error) => {
+      if (error) {
+        return console.log(error);
+      }
+      console.log("СЕРВАК РАБОТАЕТ!");
+    });
+  } catch (e) {
+    console.log(e);
   }
-  console.log("СЕРВАК РАБОТАЕТ!");
-});
+};
+
+start();
