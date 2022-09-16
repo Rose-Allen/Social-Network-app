@@ -1,18 +1,8 @@
+import { ModelStatic } from "sequelize";
 const sequelize = require("../db");
 const { DataTypes } = require("sequelize");
 
-interface IUser {
-  id: number;
-  email_address: string;
-  password: string;
-  country: string;
-  date_of_birth: string;
-  given_name: string;
-  surname: string;
-  role?: string;
-}
-
-const User: IUser = sequelize.define("user_profile", {
+const User: ModelStatic<any> = sequelize.define("user_profile", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   email_address: { type: DataTypes.STRING, unique: true },
   password: { type: DataTypes.STRING },
@@ -23,54 +13,54 @@ const User: IUser = sequelize.define("user_profile", {
   role: { type: DataTypes.STRING, defaultValue: "User" },
 });
 
-const PostLike = sequelize.define("post_like", {
+const PostLike: ModelStatic<any> = sequelize.define("post_like", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 });
 
-const UserPost = sequelize.define("user_post", {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  written_text: { type: DataTypes.STRING },
-  media_location: { type: DataTypes.STRING },
-});
-
-const PostComment = sequelize.define("post_comment", {
+const UserPost: ModelStatic<any> = sequelize.define("user_post", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   written_text: { type: DataTypes.STRING },
   media_location: { type: DataTypes.STRING },
 });
 
-const FriendShip = sequelize.define("friendship", {});
+const PostComment: ModelStatic<any> = sequelize.define("post_comment", {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  written_text: { type: DataTypes.STRING },
+  media_location: { type: DataTypes.STRING },
+});
 
-User.hasOne(Bascket);
-Bascket.belongsTo(User);
+const FriendShip: ModelStatic<any> = sequelize.define("friendship", {});
 
-User.hasMany(Rating);
-Rating.belongsTo(User);
+User.hasMany(PostLike);
+PostLike.belongsTo(User);
 
-Bascket.hasMany(BascketDevice);
-BascketDevice.belongsTo(Bascket);
+User.hasMany(UserPost);
+UserPost.belongsTo(User);
 
-Brand.hasMany(Device);
-Device.belongsTo(Brand);
+UserPost.hasMany(PostLike);
+PostLike.belongsTo(UserPost);
 
-Device.hasMany(Rating);
-Rating.belongsTo(Device);
+UserPost.hasMany(PostComment);
+PostComment.belongsTo(UserPost);
 
-Device.hasMany(BascketDevice);
-BascketDevice.belongsTo(Device);
+User.hasMany(PostComment);
+PostComment.belongsTo(User);
 
-Device.hasMany(DeviceInfo);
-DeviceInfo.belongsTo(Device);
-
-Type.hasMany(Device);
-Device.belongsTo(Type);
-
-Type.belongsToMany(Brand, { through: TypeBrand });
-Brand.belongsToMany(Type, { through: TypeBrand });
-
-Device.hasMany(DeviceInfo);
-DeviceInfo.belongsTo(Device);
+User.belongsToMany(User, {
+  as: "profile_request",
+  foreignKey: "ProfileRequest",
+  through: FriendShip,
+});
+User.belongsToMany(User, {
+  as: "profile_accept",
+  foreignKey: "ProfileAccept",
+  through: FriendShip,
+});
 
 module.exports = {
   User,
+  PostLike,
+  PostComment,
+  UserPost,
+  FriendShip,
 };
