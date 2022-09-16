@@ -2,6 +2,7 @@ import { Express, Response, Request } from "express";
 const express = require("express");
 const cors = require("cors");
 const router = require("./routes/index");
+const errorHandling = require("./middlewares/ErrorHandlingMiddleware");
 const sequelize = require("./db");
 require("dotenv").config({ path: __dirname + "/.env" });
 
@@ -11,28 +12,8 @@ const app: Express = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(errorHandling);
 app.use("/api", router);
-
-/**
- * @swagger
- * /user/{id}:
- *   delete:
- *     summary: Remove the book by id
- *     tags: [Books]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: The book id
- *
- *     responses:
- *       200:
- *         description: The book was deleted
- *       404:
- *         description: The book was not found
- */
 
 router.delete("/:id", (req: Request, res: Response) => {
   res.sendStatus(200);
