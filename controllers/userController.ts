@@ -9,15 +9,15 @@ class UserController {
   };
 
   login = async (req: Request, res: Response): Promise<void> => {
-    res.send("ИДИ НАХУЙ");
+    res.send("ХЕЛЛОУ ВОРЛДЕ");
   };
 
   logout = async (req: Request, res: Response): Promise<void> => {
-    res.send("ИДИ НАХУЙ");
+    res.send("ХЕЛЛОУ ВОРЛДЕ");
   };
 
   checkAuth = async (req: Request, res: Response): Promise<void> => {
-    res.send("ИДИ НАХУЙ");
+    res.send("ХЕЛЛОУ ВОРЛДЕ");
   };
 }
 
