@@ -1,0 +1,127 @@
+openapi: 3.0.0
+info:
+  title: SocialNetwork API
+  version: '1.0'
+paths:
+  /api/post:
+    post:
+      tags:
+        - api
+      summary: 'create post'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: # Request body contents
+              type: object
+              properties:
+                userId:
+                  description: id of user
+                  required: true
+                  type: integer
+                text:
+                  description: text of post
+                  required: true
+                  type: string
+                media:
+                  description: location of image
+                  required: true
+                  type: string
+              example: # Sample object
+                userId: 1
+                text: "ASS"
+                media: "TARDIS"
+      responses:
+        '200':
+          description: 'return post information'
+  /address/types:
+    get:
+      tags:
+        - address
+      summary: 'get address type list'
+      parameters:
+        - name: text
+          in: query
+          schema:
+            type: string
+        - name: media
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'return address type list'
+  /address/create:
+    post:
+      tags:
+        - address
+      summary: 'create address'
+      parameters:
+        -
+          name: person_id
+          in: query
+          schema:
+            type: integer
+        -
+          name: postcode
+          in: query
+          schema:
+            type: string
+        -
+          name: country_id
+          in: query
+          schema:
+            type: integer
+        -
+          name: region_id
+          in: query
+          schema:
+            type: integer
+        -
+          name: city_id
+          in: query
+          schema:
+            type: integer
+        -
+          name: city_region_id
+          in: query
+          schema:
+            type: integer
+        -
+          name: street
+          in: query
+          schema:
+            type: string
+        -
+          name: building
+          in: query
+          schema:
+            type: string
+        -
+          name: office
+          in: query
+          schema:
+            type: integer
+        -
+          name: phone
+          in: query
+          schema:
+            type: string
+        -
+          name: village
+          in: query
+          schema:
+            type: string
+        -
+          name: address_type_id
+          in: query
+          schema:
+            type: integer
+        -
+          name: person_type_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'return object'
