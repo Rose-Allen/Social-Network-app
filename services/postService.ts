@@ -2,8 +2,10 @@ const { UserPost, User } = require("../models/model");
 const uuid = require("uuid");
 const fs = require("fs");
 const path = require("path");
+const ApiError = require("../error/ApiError");
 const aws = require("../s3");
 const sequelize = require("../db");
+const redisClient = require("../caching");
 
 class PostService {
   create = async (
@@ -45,45 +47,52 @@ class PostService {
       return { ...postData.dataValues, media: `/images/${result.Key}` };
     } catch (e) {
       await t.rollback();
+      console.log(e);
       if (e) {
-        throw new Error("Bad request");
+        throw ApiError.badRequest("Неверный запрос");
       }
       return {};
     }
-    // const user = await User.create({
-    //   email_address: "lifergamerus@gmail.com",
-    //   password: "asdasdas",
-    //   country: "wakanda",
-    //   date_of_birth: "2003-07-30",
-    //   given_name: "fortuna",
-    //   surname: "sabi",
-    // });
   };
 
   getAllPosts = async (): Promise<Object> => {
     const t = await sequelize.transaction();
+    let isCached = false;
 
     try {
-      const posts = await UserPost.findAll(
-        {
-          include: [
-            {
-              model: User,
-              attributes: ["email_address", "date_of_birth"],
-              required: false, // will create a left join
-            },
-          ],
-        },
-        { transaction: t }
-      );
-
-      await t.commit();
-
-      return posts;
+      const cacheResults = await redisClient.get("getAll");
+      if (cacheResults) {
+        isCached = true;
+        const posts = JSON.parse(cacheResults);
+        await redisClient.set("getAll", JSON.stringify(posts));
+        console.log("s");
+        return { isCached, ...posts };
+      } else {
+        const posts = await UserPost.findAndCountAll(
+          {
+            include: [
+              {
+                model: User,
+                attributes: ["email_address", "date_of_birth"],
+                required: false, // will create a left join
+              },
+            ],
+          },
+          { transaction: t }
+        );
+        if (posts.length === 0) {
+          throw "API returned an empty array";
+        }
+        await redisClient.set("getAll", JSON.stringify(posts));
+        console.log("s");
+        await t.commit();
+        return { isCached, ...posts };
+      }
     } catch (e) {
       await t.rollback();
+      console.log(e);
       if (e) {
-        throw new Error("Bad request");
+        throw ApiError.badRequest("Неверный запрос");
       }
       return {};
     }
@@ -106,8 +115,9 @@ class PostService {
       return post;
     } catch (e) {
       await t.rollback();
+      console.log(e);
       if (e) {
-        throw new Error("Bad request");
+        throw ApiError.badRequest("Неверный запрос");
       }
       return {};
     }
@@ -163,8 +173,9 @@ class PostService {
       return postData;
     } catch (e) {
       await t.rollback();
+      console.log(e);
       if (e) {
-        throw new Error("Bad request");
+        throw ApiError.badRequest("Неверный запрос");
       }
       return {};
     }

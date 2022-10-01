@@ -1,0 +1,29 @@
+version: "3"
+services:
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - webnet
+  db:
+    image: postgres
+    ports:
+      - "2000:5432"
+    networks:
+      - webnet
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: MegaMan3002
+      POSTGRES_DB: avecoder
+  web:
+    image: lab
+    ports:
+      - "6000:5000"
+    networks:
+      - webnet
+    environment:
+      DB_HOST: db
+      REDIS_HOST: redis
+networks:
+  webnet:

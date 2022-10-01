@@ -4,9 +4,9 @@ const Router = require("express");
 
 const router: Express = new Router();
 
-router.post("/", userController.register);
-router.post("/", userController.login);
-router.get("/", userController.logout);
-router.post("/", userController.checkAuth);
+router.post("/register", userController.register);
+router.post("/login", userController.login);
+router.get("/logout", userController.logout);
+router.post("/checkAuth", userController.checkAuth);
 
 module.exports = router;
